@@ -34,6 +34,11 @@ func check(e error) {
 	}
 }
 
+// TODO(#2): add a restore function
+// func restore() {
+
+// }
+
 func delete(current []file) {
 	for _, file := range current {
 		err := os.Rename(file.currentPWD, file.filePWD)
@@ -67,7 +72,7 @@ func genPaths(parent string, files []string) []file {
 	return FILES
 }
 
-// TODO(#8): add flags in order to parse actions
+// TODO(#1): add flags in order to parse actions
 func main() {
 	file := genPaths(getPWD(), os.Args[1:])
 	delete(file)

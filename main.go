@@ -67,7 +67,7 @@ func genPaths(parent string, files []string) []file {
 	return FILES
 }
 
-// TODO: add flags in order to parse actions
+// TODO(#8): add flags in order to parse actions
 func main() {
 	file := genPaths(getPWD(), os.Args[1:])
 	delete(file)

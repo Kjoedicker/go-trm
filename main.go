@@ -9,6 +9,7 @@ import (
 
 type file struct {
 	name       string
+	alias      string
 	currentPWD string
 	filePWD    string
 	infoPWD    string
@@ -57,6 +58,15 @@ func delete(current []file) {
 	}
 }
 
+func exists(name string, path string, newName string, count int) string {
+	if _, err := os.Stat(filepath.Join(path, newName)); err != nil {
+		if os.IsNotExist(err) {
+			return newName
+		}
+	}
+	return exists(name, path, fmt.Sprintf("%v.%v", name, count), count+1)
+}
+
 func genPaths(parent string, files []string) []file {
 	trash := filepath.Join(os.Getenv("XDG_DATA_HOME"), "Trash/Trash")
 	fFolder := filepath.Join(trash, "files")
@@ -64,10 +74,12 @@ func genPaths(parent string, files []string) []file {
 
 	FILES := make([]file, len(files))
 	for idx, afile := range files {
+
 		FILES[idx].name = afile
-		FILES[idx].currentPWD = filepath.Join(parent, afile)
-		FILES[idx].filePWD = filepath.Join(fFolder, afile)
-		FILES[idx].infoPWD = filepath.Join(iFolder, afile+".info")
+		FILES[idx].alias = exists(afile, fFolder, afile, 0)
+		FILES[idx].currentPWD = filepath.Join(parent, FILES[idx].name)
+		FILES[idx].filePWD = filepath.Join(fFolder, FILES[idx].alias)
+		FILES[idx].infoPWD = filepath.Join(iFolder, FILES[idx].alias+".info")
 	}
 
 	return FILES

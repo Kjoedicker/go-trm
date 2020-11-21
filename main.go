@@ -40,7 +40,6 @@ func check(e error) {
 
 // }
 
-// TODO(#3): handle situations where the file already exists
 func delete(current []file) {
 	for _, file := range current {
 		err := os.Rename(file.currentPWD, file.filePWD)

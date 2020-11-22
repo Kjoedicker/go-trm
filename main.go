@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -121,11 +123,22 @@ func delete(current []file) {
 	}
 }
 
+func listdir(path string) {
+	files, err := ioutil.ReadDir(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, f := range files {
+		fmt.Println(f.Name())
+	}
+}
+
 // TODO(#1): add flags in order to parse actions
 func main() {
 	file := genPaths(getPWD(), os.Args[1:], false)
-	// delete(file)
-	restore(file)
+	delete(file)
+	// restore(file)
 
 	// fmt.Println(file)
 

@@ -91,15 +91,23 @@ func rename(name string, path string, newName string, count int) string {
 	return rename(name, path, fmt.Sprintf("%v.%v", name, count), count+1)
 }
 
-// TODO(#2): add a restore function
-// func restore(current []file) {
+func move(fro string, to string) {
+	fmt.Println(to)
+	err := os.Rename(fro, to)
+	exitOnError(err)
+}
 
-// }
+// TODO(#2): add a restore function
+func restore(current []file) {
+	for _, file := range current {
+		move(file.filePWD, file.currentPWD)
+		os.Remove(file.infoPWD)
+	}
+}
 
 func delete(current []file) {
 	for _, file := range current {
-		err := os.Rename(file.currentPWD, file.filePWD)
-		exitOnError(err)
+		move(file.currentPWD, file.filePWD)
 
 		f, err := os.Create(file.infoPWD)
 		check(err)
@@ -115,9 +123,11 @@ func delete(current []file) {
 
 // TODO(#1): add flags in order to parse actions
 func main() {
-	file := genPaths(getPWD(), os.Args[1:], true)
-	delete(file)
-	fmt.Println(file)
+	file := genPaths(getPWD(), os.Args[1:], false)
+	// delete(file)
+	restore(file)
+
+	// fmt.Println(file)
 
 	// fmt.Println(getPWD())
 }

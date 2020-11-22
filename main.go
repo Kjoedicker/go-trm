@@ -46,7 +46,7 @@ func genPaths(parent string, files []string, alias bool) []file {
 		}
 
 		FILES[idx].filePWD = filepath.Join(logistics.fileFolder, FILES[idx].alias)
-		FILES[idx].infoPWD = filepath.Join(logistics.infoFolder, FILES[idx].alias+".info")
+		FILES[idx].infoPWD = filepath.Join(logistics.infoFolder, FILES[idx].alias+".trashinfo")
 	}
 
 	return FILES

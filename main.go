@@ -7,12 +7,42 @@ import (
 	"time"
 )
 
+type logic struct {
+	trash      string
+	fileFolder string
+	infoFolder string
+}
+
+func genLogic() logic {
+	trash := filepath.Join(os.Getenv("XDG_DATA_HOME"), "Trash/Trash")
+
+	return logic{
+		fileFolder: filepath.Join(trash, "files"),
+		infoFolder: filepath.Join(trash, "info"),
+	}
+}
+
 type file struct {
 	name       string
 	alias      string
 	currentPWD string
 	filePWD    string
 	infoPWD    string
+}
+
+func genPaths(parent string, files []string) []file {
+	logistics := genLogic()
+
+	FILES := make([]file, len(files))
+	for idx, afile := range files {
+		FILES[idx].name = afile
+		FILES[idx].alias = rename(afile, logistics.fileFolder, afile, 0)
+		FILES[idx].currentPWD = filepath.Join(parent, FILES[idx].name)
+		FILES[idx].filePWD = filepath.Join(logistics.fileFolder, FILES[idx].alias)
+		FILES[idx].infoPWD = filepath.Join(logistics.infoFolder, FILES[idx].alias+".info")
+	}
+
+	return FILES
 }
 
 func exitOnError(err error) {
@@ -35,6 +65,25 @@ func check(e error) {
 	}
 }
 
+func exists(path string) bool {
+	if _, err := os.Stat(path); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+func rename(name string, path string, newName string, count int) string {
+	fmt.Println(newName)
+	if _, err := os.Stat(filepath.Join(path, newName)); err != nil {
+		if os.IsNotExist(err) {
+			return newName
+		}
+	}
+	return rename(name, path, fmt.Sprintf("%v.%v", name, count), count+1)
+}
+
 // TODO(#2): add a restore function
 // func restore() {
 
@@ -55,33 +104,6 @@ func delete(current []file) {
 		_, err = f.Write(body)
 		check(err)
 	}
-}
-
-func rename(name string, path string, newName string, count int) string {
-	if _, err := os.Stat(filepath.Join(path, newName)); err != nil {
-		if os.IsNotExist(err) {
-			return newName
-		}
-	}
-	return rename(name, path, fmt.Sprintf("%v.%v", name, count), count+1)
-}
-
-func genPaths(parent string, files []string) []file {
-	trash := filepath.Join(os.Getenv("XDG_DATA_HOME"), "Trash/Trash")
-	fFolder := filepath.Join(trash, "files")
-	iFolder := filepath.Join(trash, "info")
-
-	FILES := make([]file, len(files))
-	for idx, afile := range files {
-
-		FILES[idx].name = afile
-		FILES[idx].alias = rename(afile, fFolder, afile, 0)
-		FILES[idx].currentPWD = filepath.Join(parent, FILES[idx].name)
-		FILES[idx].filePWD = filepath.Join(fFolder, FILES[idx].alias)
-		FILES[idx].infoPWD = filepath.Join(iFolder, FILES[idx].alias+".info")
-	}
-
-	return FILES
 }
 
 // TODO(#1): add flags in order to parse actions

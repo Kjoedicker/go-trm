@@ -30,14 +30,21 @@ type file struct {
 	infoPWD    string
 }
 
-func genPaths(parent string, files []string) []file {
+func genPaths(parent string, files []string, alias bool) []file {
 	logistics := genLogic()
 
 	FILES := make([]file, len(files))
 	for idx, afile := range files {
 		FILES[idx].name = afile
-		FILES[idx].alias = rename(afile, logistics.fileFolder, afile, 0)
 		FILES[idx].currentPWD = filepath.Join(parent, FILES[idx].name)
+
+		switch alias {
+		case true:
+			FILES[idx].alias = rename(afile, logistics.fileFolder, afile, 0)
+		default:
+			FILES[idx].alias = afile
+		}
+
 		FILES[idx].filePWD = filepath.Join(logistics.fileFolder, FILES[idx].alias)
 		FILES[idx].infoPWD = filepath.Join(logistics.infoFolder, FILES[idx].alias+".info")
 	}
@@ -85,7 +92,7 @@ func rename(name string, path string, newName string, count int) string {
 }
 
 // TODO(#2): add a restore function
-// func restore() {
+// func restore(current []file) {
 
 // }
 
@@ -108,7 +115,7 @@ func delete(current []file) {
 
 // TODO(#1): add flags in order to parse actions
 func main() {
-	file := genPaths(getPWD(), os.Args[1:])
+	file := genPaths(getPWD(), os.Args[1:], true)
 	delete(file)
 	fmt.Println(file)
 

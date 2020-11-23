@@ -99,15 +99,19 @@ func move(fro string, to string) {
 	exitOnError(err)
 }
 
-func restore(current []file) {
-	for _, file := range current {
+func restore() {
+	files := genPaths(getPWD(), os.Args[2:], false)
+
+	for _, file := range files {
 		move(file.filePWD, file.currentPWD)
 		os.Remove(file.infoPWD)
 	}
 }
 
-func delete(current []file) {
-	for _, file := range current {
+func delete() {
+	files := genPaths(getPWD(), os.Args[2:], true)
+
+	for _, file := range files {
 		move(file.currentPWD, file.filePWD)
 
 		f, err := os.Create(file.infoPWD)
@@ -133,13 +137,25 @@ func listdir(path string) {
 	}
 }
 
+func parseFlags(flag string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in f", r)
+			parseFlags("--delete")
+		}
+	}()
+
+	flags := map[string]func(){
+		"-d":        delete,
+		"--delete":  delete,
+		"-r":        restore,
+		"--restore": restore,
+	}
+
+	flags[flag]()
+}
+
 // TODO(#1): add flags in order to parse actions
 func main() {
-	file := genPaths(getPWD(), os.Args[1:], false)
-	delete(file)
-	// restore(file)
-
-	// fmt.Println(file)
-
-	// fmt.Println(getPWD())
+	parseFlags(os.Args[1])
 }

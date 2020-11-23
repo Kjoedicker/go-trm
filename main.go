@@ -99,7 +99,6 @@ func move(fro string, to string) {
 	exitOnError(err)
 }
 
-// TODO(#2): add a restore function
 func restore(current []file) {
 	for _, file := range current {
 		move(file.filePWD, file.currentPWD)

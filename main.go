@@ -16,7 +16,7 @@ type logic struct {
 }
 
 func genLogic() logic {
-	trash := filepath.Join(os.Getenv("XDG_DATA_HOME"), "Trash/Trash")
+	trash := os.Getenv("XDG_TRASH_HOME")
 
 	return logic{
 		fileFolder: filepath.Join(trash, "files"),
@@ -109,6 +109,7 @@ func restore() {
 }
 
 func delete() {
+
 	files := genPaths(getPWD(), os.Args[2:], true)
 
 	for _, file := range files {
@@ -126,7 +127,9 @@ func delete() {
 	}
 }
 
-func listdir(path string) {
+func listdir() {
+	path := filepath.Join(os.Getenv("XDG_TRASH_HOME"), "files")
+
 	files, err := ioutil.ReadDir(path)
 	if err != nil {
 		log.Fatal(err)
@@ -157,5 +160,6 @@ func parseFlags(flag string) {
 
 // TODO(#1): add flags in order to parse actions
 func main() {
+
 	parseFlags(os.Args[1])
 }

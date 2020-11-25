@@ -155,7 +155,6 @@ func parseFlags(flag string) {
 	flags[flag]()
 }
 
-// TODO(#1): add flags in order to parse actions
 func main() {
 	parseFlags(os.Args[1])
 }

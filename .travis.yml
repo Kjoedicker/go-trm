@@ -1,0 +1,14 @@
+language: go
+go:
+  - 1.9.x
+env:
+  DEFINE_PATH="."
+install:
+  - go get github.com/kjoedicker/go-trm
+  - go get -v .
+  - go get -u golang.org/x/lint/golint
+script:
+  - diff <(gofmt -d .) <(echo -n)
+  - go vet -x ./...
+  - golint -set_exit_status ./...
+  - go build -v .

@@ -150,6 +150,8 @@ func parseFlags(flag string) {
 	flags := map[string]func(){
 		"-r":        restore,
 		"--restore": restore,
+		"-l":        listdir,
+		"--listdir": listdir,
 	}
 
 	flags[flag]()

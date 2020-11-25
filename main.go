@@ -134,6 +134,7 @@ func listdir() {
 		log.Fatal(err)
 	}
 
+	// TODO(#5): find a way to format cleaner output
 	for _, f := range files {
 		fmt.Println(f.Name())
 	}

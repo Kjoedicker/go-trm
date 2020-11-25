@@ -109,8 +109,7 @@ func restore() {
 }
 
 func delete() {
-
-	files := genPaths(getPWD(), os.Args[2:], true)
+	files := genPaths(getPWD(), os.Args[1:], true)
 
 	for _, file := range files {
 		move(file.currentPWD, file.filePWD)
@@ -144,13 +143,11 @@ func parseFlags(flag string) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Println("Recovered in f", r)
-			parseFlags("--delete")
+			delete()
 		}
 	}()
 
 	flags := map[string]func(){
-		"-d":        delete,
-		"--delete":  delete,
 		"-r":        restore,
 		"--restore": restore,
 	}
@@ -160,6 +157,5 @@ func parseFlags(flag string) {
 
 // TODO(#1): add flags in order to parse actions
 func main() {
-
 	parseFlags(os.Args[1])
 }

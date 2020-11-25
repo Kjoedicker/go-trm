@@ -84,7 +84,6 @@ func exists(path string) bool {
 }
 
 func rename(name string, path string, newName string, count int) string {
-	fmt.Println(newName)
 	if _, err := os.Stat(filepath.Join(path, newName)); err != nil {
 		if os.IsNotExist(err) {
 			return newName
@@ -94,7 +93,6 @@ func rename(name string, path string, newName string, count int) string {
 }
 
 func move(fro string, to string) {
-	fmt.Println(to)
 	err := os.Rename(fro, to)
 	exitOnError(err)
 }
@@ -143,7 +141,6 @@ func listdir() {
 func parseFlags(flag string) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Recovered in f", r)
 			delete()
 		}
 	}()

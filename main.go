@@ -15,12 +15,28 @@ type logic struct {
 	infoFolder string
 }
 
+func exists(paths []string) {
+	for _, path := range paths {
+		if _, err := os.Stat(path); err != nil {
+			if os.IsNotExist(err) {
+				err := os.MkdirAll(path, 0755)
+				if err != nil {
+					exitOnError(err)
+				}
+			}
+		}
+	}
+}
+
 func genLogic() logic {
 	trash := os.Getenv("XDG_TRASH_HOME")
+	ffolder := filepath.Join(trash, "files")
+	ifolder := filepath.Join(trash, "info")
 
+	exists([]string{trash, ffolder, ifolder})
 	return logic{
-		fileFolder: filepath.Join(trash, "files"),
-		infoFolder: filepath.Join(trash, "info"),
+		fileFolder: ffolder,
+		infoFolder: ifolder,
 	}
 }
 
@@ -74,15 +90,6 @@ func check(e error) {
 	}
 }
 
-func exists(path string) bool {
-	if _, err := os.Stat(path); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
-}
-
 func rename(name string, path string, newName string, count int) string {
 	if _, err := os.Stat(filepath.Join(path, newName)); err != nil {
 		if os.IsNotExist(err) {
@@ -126,6 +133,7 @@ func delete() {
 
 func listdir() {
 	path := filepath.Join(os.Getenv("XDG_TRASH_HOME"), "files")
+	fmt.Println(path)
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {

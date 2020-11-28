@@ -133,7 +133,6 @@ func delete() {
 
 func listdir() {
 	path := filepath.Join(os.Getenv("XDG_TRASH_HOME"), "files")
-	fmt.Println(path)
 
 	files, err := ioutil.ReadDir(path)
 	if err != nil {

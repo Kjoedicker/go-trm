@@ -99,16 +99,23 @@ func rename(name string, path string, newName string, count int) string {
 	return rename(name, path, fmt.Sprintf("%v.%v", name, count), count+1)
 }
 
-func move(fro string, to string) {
+func move(filename string, fro string, to string) error {
 	err := os.Rename(fro, to)
-	exitOnError(err)
+	if err != nil {
+		return fmt.Errorf("%v: no such file or directory", filename)
+	}
+	return nil
 }
 
 func restore() {
 	files := genPaths(getPWD(), os.Args[2:], false)
 
 	for _, file := range files {
-		move(file.filePWD, file.currentPWD)
+		err := move(file.name, file.filePWD, file.currentPWD)
+		if err != nil {
+			fmt.Println(err)
+		}
+
 		os.Remove(file.infoPWD)
 	}
 }
@@ -117,7 +124,10 @@ func delete() {
 	files := genPaths(getPWD(), os.Args[1:], true)
 
 	for _, file := range files {
-		move(file.currentPWD, file.filePWD)
+		err := move(file.name, file.currentPWD, file.filePWD)
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		f, err := os.Create(file.infoPWD)
 		check(err)
@@ -163,5 +173,9 @@ func parseFlags(flag string) {
 }
 
 func main() {
+	if (len(os.Args)) < 2 {
+		exitOnError(fmt.Errorf("Error: invalid number of arguments [%v]", len(os.Args)))
+	}
+
 	parseFlags(os.Args[1])
 }
